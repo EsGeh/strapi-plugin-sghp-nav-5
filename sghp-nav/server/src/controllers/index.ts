@@ -1,5 +1,5 @@
-import controller from './controller';
+import clientController from './clientController';
 
 export default {
-  controller,
+  clientController,
 };

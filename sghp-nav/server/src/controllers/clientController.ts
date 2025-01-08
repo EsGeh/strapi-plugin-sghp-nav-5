@@ -5,7 +5,14 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     ctx.body = strapi
       .plugin('sghp-nav')
       // the name of the service file & the method.
-      .service('service')
+      .service('clientService')
+      .getWelcomeMessage();
+  },
+  renderAll(ctx) {
+    ctx.body = strapi
+      .plugin('sghp-nav')
+      // the name of the service file & the method.
+      .service('clientService')
       .getWelcomeMessage();
   },
 });
