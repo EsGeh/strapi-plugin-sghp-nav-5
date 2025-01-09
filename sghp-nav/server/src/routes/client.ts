@@ -6,17 +6,27 @@ export default {
       path: "/",
       handler: "clientController.index",
       config: {
+        auth: false,
         policies: [],
       },
     },
-    // TODO:
     {
       method: "GET",
-      path: "/navigation/render",
+      path: "/navigations/render",
       handler: "clientController.renderAll",
       config: {
+        auth: false,
         policies: [],
       },
-    }
+    },
+    {
+      method: "GET",
+      path: "/navigations",
+      handler: "clientController.find",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
   ],
 };
