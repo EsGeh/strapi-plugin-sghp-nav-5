@@ -18,11 +18,8 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
   },
 
   async renderAll(ctx) {
-    console.log( "validate...");
     await this.validateQuery(ctx);
-    console.log( "sanitize...");
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
-    console.log( "running...");
     const results = await strapi
       .plugin('sghp-nav')
       .service('clientService')
