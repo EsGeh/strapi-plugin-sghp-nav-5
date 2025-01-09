@@ -23,7 +23,7 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
         populate: {
           items: {
             populate: {
-              // related: params?.populateRelated || false
+              related: params?.populateRelated || false
             }
           }
         }
