@@ -74,7 +74,6 @@ namespace Private {
           },
         },
       },
-      localizations: true,
-    }
+    },
   } as const;
 }
