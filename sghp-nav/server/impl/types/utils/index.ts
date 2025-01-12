@@ -6,6 +6,7 @@ export {
   itemMoveDown,
   renderPaths,
   renderPathsItems,
+  renderPath,
 } from "./operations";
 
 export {

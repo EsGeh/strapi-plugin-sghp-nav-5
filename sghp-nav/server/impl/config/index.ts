@@ -6,12 +6,12 @@ export interface Config {
 }
 
 export default {
-  default: ({env}) => ({
+  default: ({env} : any) => ({
     relatedType: undefined,
     relatedDisplayField: undefined,
     hierarchicalPaths: false,
   }),
-  validator(config) {
+  validator(config: any) {
     if(
       typeof config.relatedType !== 'string'
       && config.relatedType != ""
