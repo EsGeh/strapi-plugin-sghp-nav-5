@@ -7,6 +7,7 @@ import {
   Config,
 } from '../types'
 import ItemList, { ItemEditHooks } from '../components/List';
+import ItemModal, { ItemFormHooks, Args as ItemModalArgs } from '../components/ItemModal';
 import * as utils from '../utils';
 
 
@@ -14,6 +15,10 @@ import {
   Main,
   EmptyStateLayout,
   Button,
+  Flex,
+  SingleSelect,
+  SingleSelectOption,
+  Modal,
 } from '@strapi/design-system';
 import {
   Layouts,
@@ -21,6 +26,7 @@ import {
 } from '@strapi/strapi/admin';
 import {
   Plus,
+  Check,
 } from '@strapi/icons';
 import { useIntl } from 'react-intl';
 import {
@@ -29,6 +35,7 @@ import {
   use,
   Suspense,
 } from 'react';
+import { useTheme } from 'styled-components';
 
 import { getTranslation } from '../utils/getTranslation';
 
@@ -39,8 +46,8 @@ type PageStateOK = {
   type: "ok",
   data: Data,
   selection: Selection,
+  itemFormParams?: ItemFormParams,
 };
-
 type PageStateLoading = {
   type: "loading",
   data?: Data,
@@ -62,147 +69,414 @@ type Data = {
 type Selection = {
   name: string,
   locale: string,
-  // navigation?: FrontNav,
-  // newNavFormParams: NewNavParams|null,
-  // itemFormParams: ItemFormParams|null,
 };
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
-/*
-type NewNavParams = {};
+type EditHooks = {
+  onSave: () => void,
+  onAddNav: () => void,
+  onDelNav: () => void,
+  onChangeNavigation: (name: string) => void,
+  onChangeLanguage: (locale: string) => void,
+  itemFormHooks: ItemFormHooks,
+}
+  & ItemEditHooks
+;
 
 type ItemFormParams = {
   parent?: FrontNavItem,
   item?: FrontNavItem,
-  errors: string[],
-};
-*/
-
-const Header = () => {
-  return <Layouts.Header
-    title={ pluginId }
-    subtitle="Edit Navigation"
-    // primaryAction={ "PrimaryAction" }
-  />;
 };
 
-const NavEditor = (
-  args
+function loadData(
+  {pageState, setPageState, ...args}
   : {
-    state: PageStateOK,
-  } & ItemEditHooks
-) => {
-  const state = args.state;
-  const navigation = state.data.navigations.find(navigation => navigation.name === state.selection.name);
-  return <Layouts.Content>{
-    !navigation
-    ? <EmptyStateLayout
-      content="No navigation yet..."
-      action={
-        <Button
-          startIcon={<Plus />}
-          onClick={ () => { } }
-        >{
-          "Add Navigation"
-        }</Button>
-      }
-    />
-    : <ItemList
-      config={ state.data.config }
-      items={ navigation.items }
-      { ...args }
-    />
-  }</Layouts.Content>;
-};
-
-const HomePage = () => {
-
-  const { formatMessage } = useIntl();
-  const [pageState, setPageState] = useState<PageState>({
-    type: "loading",
-  });
-
-  function loadData(
+    pageState: PageState,
+    setPageState: (_: PageState) => void,
+  } & {
     name?: string,
     locale?: string,
-  ) {
+  }
+) {
+  setPageState({
+    type:"loading",
+    data: (pageState.type=="ok" || pageState.type=="loading") ? pageState.data : undefined,
+    selection: pageState.selection,
+  });
+  Promise.all([
+    api.getConfig(),
+    api.getLocales(),
+    api.get(args.locale)
+  ]).then(([config,locales,navigations]) => {
+    const name = args.name || pageState.selection?.name || "Main";
+    const locale = args.locale || pageState.selection?.locale || locales.find(locale => locale.isDefault)?.code;
+    if( !locale ) {
+      throw Error("no default locale!");
+    }
     setPageState({
-      type:"loading",
-      data: (pageState.type=="ok" || pageState.type=="loading") ? pageState.data : undefined,
+      type: "ok",
+      data: {
+        config: config,
+        locales: locales,
+        navigations: navigations,
+      },
+      selection: {
+        name: name,
+        locale: locale
+      }
+    });
+  }).catch( error => {
+    setPageState({
+      type: "error",
+      error: error,
       selection: pageState.selection,
     });
-    Promise.all([
-      api.getConfig(),
-      api.getLocales(),
-      api.get()
-    ]).then(([config,locales,navigations]) => {
-      name = name || pageState.selection?.name || "Main";
-      locale = locale || pageState.selection?.locale || locales.find(locale => locale.isDefault)?.code;
-      if( !locale ) {
-        throw Error("no default locale!");
-      }
+  });
+}
+
+const getEditHooks = (
+  {pageState, setPageState}
+  : {
+    pageState: PageStateOK,
+    setPageState: (_: PageState) => void,
+  }
+) => ({
+  onSave: () => {
+    console.debug( "onSave" );
+    const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+    if( navigation === undefined ) return;
+    api.update(
+      navigation,
+      pageState.selection.locale,
+    )
+    .then(navigations => {
       setPageState({
-        type: "ok",
+        ...pageState,
         data: {
-          config: config,
-          locales: locales,
+          ...pageState.data,
           navigations: navigations,
         },
-        selection: {
-          name: name,
-          locale: locale
-        }
       });
-    }).catch( error => {
+    })
+    .catch(error => {
       setPageState({
         type: "error",
         error: error,
         selection: pageState.selection,
       });
     });
+  },
+  onAddNav: () => {
+    console.error( "TODO: onAddNav" );
+  },
+  onDelNav: () => {
+    console.error( "TODO: onDelNav" );
+  },
+  onChangeNavigation: (name: string) => {
+    console.debug( `onChangeNavigation ${ name }` );
+    setPageState({
+      ...pageState,
+      selection: {
+        ...pageState.selection,
+        name: name,
+      }
+    });
+  },
+  onChangeLanguage: (locale: string) => {
+    console.debug( `onChangeLanguage ${ locale }` );
+    loadData({pageState, setPageState, name: "Main", locale: locale });
+  },
+  onSetRemoved: (item: FrontNavItem, removed: boolean) => {
+    console.debug( `onSetRemoved /${item.path}: ${removed}` );
+    utils.itemSetRemoved( item, removed );
+    setPageState({ ...pageState });
+  },
+  onEditItemClicked: (item: FrontNavItem) => {
+    console.debug( `onEditItemClicked /${item.path}` );
+    setPageState({
+      ...pageState,
+      itemFormParams: { item: item }
+    });
+  },
+  onAddItemClicked: (parent?: FrontNavItem) => {
+    console.debug( `onAddItemClicked parent: /${parent?.path}` );
+    setPageState({
+      ...pageState,
+      itemFormParams: { parent: parent }
+    });
+  },
+  onMoveUp: (item: FrontNavItem) => {
+    console.debug( `onMoveUp /${item.path}` );
+    const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+    if( navigation === undefined ) return;
+    utils.itemMoveUp( navigation, item );
+    setPageState({ ...pageState });
+  },
+  onMoveDown: (item: FrontNavItem) => {
+    console.debug( `onMoveDown /${item.path}` );
+    const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+    if( navigation === undefined ) return;
+    utils.itemMoveDown( navigation, item );
+    setPageState({ ...pageState });
+  },
+  itemFormHooks: {
+    onCommit: (data: Omit<FrontNavItem,"id"|"documentId">) => {
+      console.debug( "onCommit" );
+      if( !pageState.itemFormParams ) return;
+      const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+      if( navigation == undefined ) return;
+      // add:
+      if( !pageState.itemFormParams?.item ) {
+        console.debug( "addItem commit" );
+        const parent = pageState.itemFormParams?.parent;
+        api.addItem(
+            data,
+            navigation.id,
+            parent,
+            pageState.selection.locale
+        )
+          .then(navigations => {
+            setPageState({
+              ...pageState,
+              data: {
+                ...pageState.data,
+                navigations: navigations,
+              },
+              itemFormParams: undefined,
+            });
+          })
+          .catch(error => {
+            console.error( `error while commiting ${error}` );
+            setPageState({
+              type: "error",
+              error: error,
+              selection: pageState.selection,
+            });
+          });
+      }
+      else {
+        console.debug( "editItem commit" );
+        const item = pageState.itemFormParams?.item;
+        const newItem: FrontNavItem = {
+          ...data,
+          documentId: item.documentId,
+          id: item.id,
+        };
+        api.updateItem( newItem,  pageState.selection.locale )
+          .then(navigations => {
+            setPageState({
+              ...pageState,
+              data: {
+                ...pageState.data,
+                navigations: navigations,
+              },
+              itemFormParams: undefined,
+            });
+          })
+          .catch(error => {
+            console.error( `error while commiting ${error}` );
+            setPageState({
+              type: "error",
+              error: error,
+              selection: pageState.selection,
+            });
+          });
+      }
+    },
+    onAbort: () => {
+      console.debug("onAbort");
+      setPageState( {
+        ...pageState,
+        itemFormParams: undefined,
+      });
+    },
+    onValidate: (data: Omit<FrontNavItem,"id"|"documentId">) => {
+      console.debug("onValidate");
+      // return ["test error"];
+      const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+      if( navigation === undefined ) return ["no navigation"];
+      if( !pageState.itemFormParams ) return ["no itemFormParams"];
+      if( !pageState.itemFormParams?.item ) {
+        console.debug( "addItem validate" );
+        const parent = pageState.itemFormParams?.parent;
+        const validationErrors = utils.validateAdd(
+          navigation,
+          data,
+          pageState.data.config?.hierarchicalPaths || false,
+          parent,
+        );
+        return validationErrors;
+      }
+      else {
+        console.debug( "editItem commit" );
+        const item = pageState.itemFormParams?.item;
+        const newItem: FrontNavItem = {
+          ...data,
+          documentId: item.documentId,
+          id: item.id,
+        };
+        // console.debug( `setting: ${ JSON.stringify( newItem ) }` )
+        const validationErrors = utils.validateEdit(
+          navigation,
+          newItem,
+          pageState.data.config.hierarchicalPaths,
+        );
+        return validationErrors;
+      }
+      return [];
+    },
   }
+});
+
+export default function HomePage() {
+
+  const { formatMessage } = useIntl();
+  const [pageState, setPageState] = useState<PageState>({
+    type: "loading",
+  });
+
 
   useEffect(() => {
-    loadData();
+    loadData({ pageState:pageState, setPageState: setPageState });
   }, []);
 
   if( pageState.type == "error" ) {
     throw pageState.error;
   }
   else if( pageState.type == "loading" ) {
-    return <div>Page loading</div>;
+    return <Page.Loading />
   }
 
-  const itemEditHooks = {
-    onSetRemoved: (item: FrontNavItem, removed: boolean) => {
-      console.log( "onSetRemoved" );
-    },
-    onEditItemClicked: (item: FrontNavItem) => {
-      console.log( "onEditItemClicked" );
-    },
-    onAddItemClicked: (parent?: FrontNavItem) => {
-      console.log( "onAddItemClicked" );
-    },
-    onMoveUp: (item: FrontNavItem) => {
-      console.log( "onMoveUp" );
-    },
-    onMoveDown: (item: FrontNavItem) => {
-      console.log( "onMoveDown" );
-    },
-  };
-
-  return (
-    <Layouts.Root>
-      <Page.Title>{ pluginId }</Page.Title>
-      <Header />
-      <Page.Main>
-        <NavEditor state={pageState}
-          { ...itemEditHooks }
-        />
-      </Page.Main>
-    </Layouts.Root>
-  );
+  const editHooks = getEditHooks({
+    pageState:pageState,
+    setPageState: setPageState
+  });
+  return <NavEditor state={pageState} {...editHooks} />
 };
 
-export { HomePage };
+function NavEditor(
+  args
+  : {
+    state: PageStateOK
+  } & EditHooks
+) {
+  let itemModalArgs: ItemModalArgs|undefined = undefined;
+  if( args.state.itemFormParams ) {
+    const navigation = args.state.data.navigations.find(navigation => navigation.name === args.state.selection.name);
+    if( navigation ) {
+      itemModalArgs = {
+        relatedEntities: navigation.relatedEntities,
+        item: args.state.itemFormParams.item,
+      }
+    }
+  }
+  return (<>
+    <Layouts.Root>
+      <ItemModal
+        args={ itemModalArgs }
+        { ...args.itemFormHooks }
+      />
+      <Page.Title>{ pluginId }</Page.Title>
+      <EditorHeader { ...args } />
+      <Page.Main>
+        <EditorMain { ...args } />
+      </Page.Main>
+    </Layouts.Root>
+  </>);
+}
+
+const EditorMain = (
+  { state, ...editHooks }
+  : {
+    state: PageStateOK,
+  } & EditHooks
+) => {
+  const navigation = state.data.navigations.find(navigation => navigation.name === state.selection.name);
+  return <Layouts.Content>
+    <Flex>
+      <SingleSelect
+        label="Navigations"
+        placeholder="Select Navigation..."
+        onChange={ editHooks.onChangeNavigation }
+        value={ state.selection.name }
+      >{
+        state.data.navigations.map( (navInfo, i) => (
+          <SingleSelectOption key={ i } value={ navInfo.name }>{ navInfo.name }</SingleSelectOption>
+        ) )
+      }</SingleSelect>
+      <SingleSelect
+        label="Locales"
+        placeholder="Language..."
+        onChange={ editHooks.onChangeLanguage }
+        value={ state.selection.locale }
+      >{
+        state.data.locales.map( (locale, i) => (
+          <SingleSelectOption key={ i } value={ locale.code }>{ locale.name }</SingleSelectOption>
+        ) )
+      }</SingleSelect>
+    </Flex>
+    { (navigation === undefined)
+    ? <EmptyStateLayout
+      content="No navigation yet..."
+      action={
+        <Button
+          startIcon={<Plus />}
+          onClick={ editHooks.onAddNav }
+        >{
+          "Add Navigation"
+        }</Button>
+      }
+    />
+    : <><ItemList
+      config={ state.data.config }
+      items={ navigation.items }
+      { ...editHooks }
+    />
+    <Button
+      // disabled={ }
+      fullWidth
+      startIcon={<Plus />}
+      label={ "label" }
+      onClick={ () => { editHooks.onAddItemClicked(); } }
+    >{
+      "Add Child"
+    }</Button></>
+  }</Layouts.Content>;
+};
+
+const EditorHeader = (
+  { state, ...editHooks }
+  : { state : PageStateOK } & EditHooks
+) => {
+  const theme = useTheme();
+  return <Layouts.Header
+    title={ pluginId }
+    subtitle="Edit Navigation"
+    primaryAction={
+      <Button
+        // disabled={ !state.data || state.itemFormParams }
+        startIcon={ <Check/> }
+        onClick={ editHooks.onSave }
+      >Save</Button>
+    }
+    secondaryAction={
+      <Flex
+        gap={ theme['spaces'][2] }
+        alignItems="flex-end"
+      >
+        <Button
+          startIcon={<Plus />}
+          label={ "label" }
+          onClick={ editHooks.onAddNav }
+        >{ "Add Navigation" }</Button>
+        <Button
+          label={ "label" }
+          variant="danger"
+          disabled={ state.selection.name == "Main" }
+          onClick={ editHooks.onDelNav }
+        >{ "Delete" }</Button>
+      </Flex>
+    }
+  />;
+};

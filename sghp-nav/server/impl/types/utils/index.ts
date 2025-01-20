@@ -1,5 +1,6 @@
 export {
   findItemById,
+  findItemByDocumentId,
   findItem,
   addItem,
   itemMoveUp,

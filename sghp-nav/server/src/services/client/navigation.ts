@@ -15,7 +15,6 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
   async renderAll(
     params
   ) {
-    // TODO: populate related!!
     const config: Config = strapi.config.get('plugin::sghp-nav');
     let findArgs: Record<string,any> = merge(
       Private.findRawArgs,

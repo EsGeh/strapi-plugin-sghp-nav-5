@@ -18,10 +18,8 @@ export function fromFlatItems(
     let addNext = [];
     for( const [parent, item] of itemsToAdd ) {
       const newEl = {
-        id: item.id,
-        title: item.title,
-        path: item.path,
-        related: item.related,
+        ...item,
+        parent: undefined,
         subItems: [],
       };
       if( !parent ) {

@@ -14,4 +14,24 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
     return this.transformResponse( sanitizedResults );
   },
 
+  async update(ctx) {
+    const query = await this.sanitizeQuery(ctx);
+    const documentId = ctx.params.documentId;
+    const data = {
+      ...ctx.request.body,
+      id: undefined,
+      documentId: undefined,
+    };
+    const results = await strapi
+      .plugin('sghp-nav')
+      .service('adminNavigation')
+      .update(
+        documentId,
+        data,
+        query
+      );
+    const sanitizedResults = results;
+    ctx.body = {};
+  },
+
 } ));

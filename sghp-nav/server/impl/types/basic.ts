@@ -1,4 +1,5 @@
 
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type Navigation<Item, NavData = NavigationData> = NavData & {
   items: Item[],
@@ -23,6 +24,7 @@ export interface Locale {
 
 export interface NavigationData {
   id: number,
+  documentId: string,
   name: string,
   locale: string,
   localizations: Localization[]
@@ -30,6 +32,7 @@ export interface NavigationData {
 
 export interface NavItemData<Related = any> {
   id: number,
+  documentId: string,
   title: string,
   path: string,
   related: Related|null,

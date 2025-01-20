@@ -15,6 +15,15 @@ export function findItemById(
   return findItemHelper( nav.items, item => (item.id === id ) );
 }
 
+export function findItemByDocumentId(
+  nav: Navigation,
+  id: string,
+):
+  NavItem|undefined
+{
+  return findItemHelper( nav.items, item => (item.documentId === id ) );
+}
+
 export function findItem(
   nav: Navigation,
   cond: (item: NavItem) => boolean,
@@ -38,7 +47,6 @@ function findItemHelper(
     if( res )
       return res;
   }
-  return undefined;
 }
 
 export function addItemPure(

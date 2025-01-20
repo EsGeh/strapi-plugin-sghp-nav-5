@@ -10,6 +10,34 @@ export default {
         policies: [],
       },
     },
+    // update: navigation
+    {
+      method: "PUT",
+      path: "/navigations/:documentId",
+      handler: "adminNavigation.update",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: "PUT",
+      path: "/navigations/items/:documentId",
+      handler: "adminItem.update",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: "POST",
+      path: "/navigations/items",
+      handler: "adminItem.create",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
     {
       method: "GET",
       path: "/config",
