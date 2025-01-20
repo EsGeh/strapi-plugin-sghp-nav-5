@@ -47,6 +47,60 @@ export async function getLocales():
   return res.data;
 };
 
+export async function create(
+  data: { name: string },
+  locale?: string,
+):
+  Promise<FrontNav[]>
+{
+  const client = getFetchClient();
+  let query: { [k:string]: any } = {}
+  const queryString = qs.stringify( query );
+  const dataToSend: { name: string, locale?: string } = {
+    ...data,
+  };
+  if( locale ) { dataToSend.locale = locale;}
+  console.debug( `api.create:` );
+  console.debug( JSON.stringify( dataToSend, null, 2 ) );
+
+  let response: FrontNav[] | null;
+  try {
+    await client.post(
+      `/${pluginId}/navigations`,
+      dataToSend
+    );
+    response = await get( locale );
+  }
+  catch( error ) {
+    throw error;
+  };
+  return response;
+};
+
+export async function del(
+  documentId: string,
+  locale: string,
+):
+  Promise<FrontNav[]>
+{
+  const client = getFetchClient();
+  let query: { [k:string]: any } = {}
+  if( locale ) { query.locale = locale; }
+  const queryString = qs.stringify( query );
+  // console.debug( `queryString: ${queryString}` );
+  let response: FrontNav[] | null;
+  try {
+    await client.del(
+      `/${pluginId}/navigations/${documentId}?${queryString}`,
+    );
+    response = await get( locale );
+  }
+  catch( error ) {
+    throw error;
+  };
+  return response;
+};
+
 export async function update(
   data: FrontNav,
   locale?: string,
@@ -54,9 +108,6 @@ export async function update(
   Promise<FrontNav[]>
 {
   const client = getFetchClient();
-  let query: { [k:string]: any } = {}
-  // if( locale ) { query.locale = locale;}
-  const queryString = qs.stringify( query );
   const dataToSend = {
     ...data,
     items: applyRemove( data.items )

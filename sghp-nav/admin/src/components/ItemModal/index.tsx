@@ -31,7 +31,9 @@ export type ItemFormHooks = {
 
 type State = {
   formData: FormData,
-  errors: Errors,
+  fieldErrors: Errors,
+  /* errors not related
+   * to a specific field: */
   formErrors: string[],
 }
 
@@ -83,7 +85,7 @@ const initState = ((args?: Args) => {
   }
   return {
     formData: initFormData,
-    errors: {...initErrors},
+    fieldErrors: {...initErrors},
     formErrors: [],
   };
 });
@@ -112,7 +114,7 @@ export default function ItemModal(
   };
   const handleCommit = (event: Event) => {
     event.preventDefault();
-    if( JSON.stringify( state.errors ) !== JSON.stringify( noErrors ) )
+    if( JSON.stringify( state.fieldErrors ) !== JSON.stringify( noErrors ) )
       return;
     const data = {
       ...state.formData,
@@ -140,11 +142,11 @@ export default function ItemModal(
   }
 
   function onInputChange( field: keyof Errors, val: string) {
-    state.errors = { ...noErrors };
+    state.fieldErrors = { ...noErrors };
     state.formData[field] = val;
-    state.errors[field] = undefined;
+    state.fieldErrors[field] = undefined;
     const error = validators[field]( val );
-    if( error ) state.errors[field] = error;
+    if( error ) state.fieldErrors[field] = error;
     if( field === "title" ) {
       onTitleChange( val );
     }
@@ -182,7 +184,7 @@ export default function ItemModal(
               name="title"
               required={false}
               hint="Item Caption"
-              error={ state.errors.title }
+              error={ state.fieldErrors.title }
             >
               <Flex direction="column" alignItems="flex-start" gap={1}>
                 <Field.Label>Title</Field.Label>
@@ -201,7 +203,7 @@ export default function ItemModal(
               name="path"
               required={false}
               hint="The link where this entry points to, e.g. 'home' will link to /home"
-              error={ state.errors.path }
+              error={ state.fieldErrors.path }
             >
               <Flex direction="column" alignItems="flex-start" gap={1}>
                 <Field.Label>Path</Field.Label>
@@ -242,7 +244,7 @@ export default function ItemModal(
             </Modal.Close>
             <Button
               onClick={ handleCommit }
-              disabled={ JSON.stringify( state.errors ) !== JSON.stringify( noErrors ) }
+              disabled={ JSON.stringify( state.fieldErrors ) !== JSON.stringify( noErrors ) }
             >Submit</Button>
           </Modal.Footer>
         </form>

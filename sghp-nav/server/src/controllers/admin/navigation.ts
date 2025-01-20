@@ -14,6 +14,47 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
     return this.transformResponse( sanitizedResults );
   },
 
+  async create(ctx) {
+    const query = await this.sanitizeQuery(ctx);
+    const data = {
+      ...ctx.request.body
+    };
+    const locale: string = ctx.request.body.locale;
+    if( !data.name || !locale ) {
+      throw Error("expected format: { name, locale }");
+    }
+    const results = await strapi
+      .plugin('sghp-nav')
+      .service('adminNavigation')
+      .create(
+        data,
+        locale,
+      );
+    const sanitizedResults = results;
+    ctx.body = {};
+  },
+
+  async del(ctx) {
+    const query = await this.sanitizeQuery(ctx);
+    const documentId = ctx.params.documentId;
+    const locale: string|unknown = query.locale;
+    if( !documentId ) {
+      throw Error("expected params: documentId");
+    }
+    if( !locale ) {
+      throw Error("expected params ?locale=");
+    }
+    const results = await strapi
+      .plugin('sghp-nav')
+      .service('adminNavigation')
+      .del(
+        documentId,
+        locale,
+      );
+    const sanitizedResults = results;
+    ctx.body = {};
+  },
+
   async update(ctx) {
     const query = await this.sanitizeQuery(ctx);
     const documentId = ctx.params.documentId;
@@ -27,8 +68,7 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
       .service('adminNavigation')
       .update(
         documentId,
-        data,
-        query
+        data
       );
     const sanitizedResults = results;
     ctx.body = {};

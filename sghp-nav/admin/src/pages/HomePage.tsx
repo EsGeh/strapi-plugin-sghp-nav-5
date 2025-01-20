@@ -7,7 +7,15 @@ import {
   Config,
 } from '../types'
 import ItemList, { ItemEditHooks } from '../components/List';
-import ItemModal, { ItemFormHooks, Args as ItemModalArgs } from '../components/ItemModal';
+import ItemModal, {
+  ItemFormHooks,
+  Args as ItemModalArgs
+} from '../components/ItemModal';
+import NavigationModal, {
+  FormHooks as NavFormHooks,
+  Args as NavModalArgs,
+  Return as NavModalReturn,
+} from '../components/NavigationModal';
 import * as utils from '../utils';
 
 
@@ -18,7 +26,6 @@ import {
   Flex,
   SingleSelect,
   SingleSelectOption,
-  Modal,
 } from '@strapi/design-system';
 import {
   Layouts,
@@ -47,6 +54,7 @@ type PageStateOK = {
   data: Data,
   selection: Selection,
   itemFormParams?: ItemFormParams,
+  navFormParams?: NavModalArgs,
 };
 type PageStateLoading = {
   type: "loading",
@@ -80,6 +88,7 @@ type EditHooks = {
   onChangeNavigation: (name: string) => void,
   onChangeLanguage: (locale: string) => void,
   itemFormHooks: ItemFormHooks,
+  navFormHooks: NavFormHooks,
 }
   & ItemEditHooks
 ;
@@ -109,7 +118,16 @@ function loadData(
     api.getLocales(),
     api.get(args.locale)
   ]).then(([config,locales,navigations]) => {
-    const name = args.name || pageState.selection?.name || "Main";
+    let name: string|undefined = args.name
+    if( !name ) {
+      name = pageState.selection?.name;
+    }
+    if( !name || !navigations.find( nav => nav.name == name ) ) {
+      name = navigations.at(0)?.name;
+    }
+    if( !name ) {
+      name = "Main";
+    }
     const locale = args.locale || pageState.selection?.locale || locales.find(locale => locale.isDefault)?.code;
     if( !locale ) {
       throw Error("no default locale!");
@@ -168,10 +186,43 @@ const getEditHooks = (
     });
   },
   onAddNav: () => {
-    console.error( "TODO: onAddNav" );
+    console.debug( "onAddNav" );
+    const existing = pageState.data.navigations;
+    setPageState({
+      ...pageState,
+      navFormParams: {
+        existing: existing,
+      }
+    });
   },
   onDelNav: () => {
-    console.error( "TODO: onDelNav" );
+    console.debug( "onDelNav" );
+    const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
+    if( navigation === undefined ) return;
+    api.del(
+      navigation.documentId,
+      pageState.selection.locale,
+    )
+    .then(navigations => {
+      setPageState({
+        ...pageState,
+        data: {
+          ...pageState.data,
+          navigations: navigations,
+        },
+        selection: {
+          ...pageState.selection,
+          name: navigations.at(0)?.name || "Main",
+        }
+      });
+    })
+    .catch(error => {
+      setPageState({
+        type: "error",
+        error: error,
+        selection: pageState.selection,
+      });
+    });
   },
   onChangeNavigation: (name: string) => {
     console.debug( `onChangeNavigation ${ name }` );
@@ -185,7 +236,10 @@ const getEditHooks = (
   },
   onChangeLanguage: (locale: string) => {
     console.debug( `onChangeLanguage ${ locale }` );
-    loadData({pageState, setPageState, name: "Main", locale: locale });
+    loadData({
+      pageState, setPageState,
+      locale: locale
+    });
   },
   onSetRemoved: (item: FrontNavItem, removed: boolean) => {
     console.debug( `onSetRemoved /${item.path}: ${removed}` );
@@ -222,7 +276,7 @@ const getEditHooks = (
   },
   itemFormHooks: {
     onCommit: (data: Omit<FrontNavItem,"id"|"documentId">) => {
-      console.debug( "onCommit" );
+      console.debug( "itemFormHooks.onCommit" );
       if( !pageState.itemFormParams ) return;
       const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
       if( navigation == undefined ) return;
@@ -256,7 +310,7 @@ const getEditHooks = (
           });
       }
       else {
-        console.debug( "editItem commit" );
+        console.debug( "itemFormHooks.editItem commit" );
         const item = pageState.itemFormParams?.item;
         const newItem: FrontNavItem = {
           ...data,
@@ -285,14 +339,14 @@ const getEditHooks = (
       }
     },
     onAbort: () => {
-      console.debug("onAbort");
+      console.debug("itemFormHooks.onAbort");
       setPageState( {
         ...pageState,
         itemFormParams: undefined,
       });
     },
     onValidate: (data: Omit<FrontNavItem,"id"|"documentId">) => {
-      console.debug("onValidate");
+      console.debug("itemFormHooks.onValidate");
       // return ["test error"];
       const navigation = pageState.data.navigations.find(navigation => navigation.name === pageState.selection.name);
       if( navigation === undefined ) return ["no navigation"];
@@ -326,6 +380,43 @@ const getEditHooks = (
       }
       return [];
     },
+  },
+  navFormHooks: {
+    onCommit: (data: NavModalReturn) => {
+      console.debug( "NavModal commit" );
+      api.create(
+        data,
+        pageState.selection.locale,
+      )
+      .then(navigations => {
+        setPageState({
+          ...pageState,
+          data: {
+            ...pageState.data,
+            navigations: navigations,
+          },
+          selection: {
+            ...pageState.selection,
+            name: data.name,
+          },
+          navFormParams: undefined,
+        });
+      })
+      .catch(error => {
+        setPageState({
+          type: "error",
+          error: error,
+          selection: pageState.selection,
+        });
+      });
+    },
+    onAbort: () => {
+      console.debug( "NavModal abort" );
+      setPageState({
+        ...pageState,
+        navFormParams: undefined,
+      });
+    },
   }
 });
 
@@ -338,7 +429,10 @@ export default function HomePage() {
 
 
   useEffect(() => {
-    loadData({ pageState:pageState, setPageState: setPageState });
+    loadData({
+      pageState: pageState,
+      setPageState: setPageState
+    });
   }, []);
 
   if( pageState.type == "error" ) {
@@ -376,6 +470,10 @@ function NavEditor(
       <ItemModal
         args={ itemModalArgs }
         { ...args.itemFormHooks }
+      />
+      <NavigationModal
+        args={ args.state.navFormParams }
+        { ...args.navFormHooks }
       />
       <Page.Title>{ pluginId }</Page.Title>
       <EditorHeader { ...args } />
@@ -428,7 +526,8 @@ const EditorMain = (
         }</Button>
       }
     />
-    : <><ItemList
+    : <>
+    <ItemList
       config={ state.data.config }
       items={ navigation.items }
       { ...editHooks }
@@ -441,7 +540,8 @@ const EditorMain = (
       onClick={ () => { editHooks.onAddItemClicked(); } }
     >{
       "Add Child"
-    }</Button></>
+    }</Button>
+    </>
   }</Layouts.Content>;
 };
 

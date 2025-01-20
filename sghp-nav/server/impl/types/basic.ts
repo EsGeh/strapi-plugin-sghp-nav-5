@@ -27,7 +27,7 @@ export interface NavigationData {
   documentId: string,
   name: string,
   locale: string,
-  localizations: Localization[]
+  // localizations: Localization[]
 }
 
 export interface NavItemData<Related = any> {

@@ -10,6 +10,24 @@ export default {
         policies: [],
       },
     },
+    {
+      method: "POST",
+      path: "/navigations",
+      handler: "adminNavigation.create",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/navigations/:documentId",
+      handler: "adminNavigation.del",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
     // update: navigation
     {
       method: "PUT",

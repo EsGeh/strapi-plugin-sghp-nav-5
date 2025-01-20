@@ -35,10 +35,37 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
     return renderedNavs;
   },
 
+  async create(
+    data: Pick<types.Navigation,"name">,
+    locale: string,
+  ) {
+    const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
+    if( !data.name ) {
+      throw new errors.NotFoundError('expected: { name, locale }');
+    }
+    const createArgs = {
+      data: data,
+      locale: locale,
+    }
+    const newEntry = await navDocuments.create( createArgs )
+    return newEntry;
+  },
+
+  async del(
+    documentId: string,
+    locale: string,
+  ) {
+    const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
+    const newEntry = await navDocuments.delete({
+      documentId: documentId,
+      locale: locale
+    });
+    return newEntry;
+  },
+
   async update(
     documentId: string,
     data: types.Navigation,
-    params,
   ) {
     const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
     const itemDocuments = strapi.documents('plugin::sghp-nav.item');
@@ -47,15 +74,20 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
     if( validationErrors.length > 0 ) {
       throw new errors.ValidationError(`invalid navigation data: ${ validationErrors.join() }`);
     }
-    const navData: types.Navigation = await super.findOne( documentId, {
-      populate: {
-        items: Private.populateItemsRender(),
-      },
-      ...params,
-    } );
-    if( !navData ) {
-      throw new errors.NotFoundError('Navigation not found');
-    }
+    let navData: types.Navigation = await (async () => {
+      const temp = await navDocuments.findOne({
+        documentId: documentId,
+        populate: {
+          items: Private.populateItemsRender(),
+        },
+        locale: data.locale
+      } );
+      if( !temp ) {
+        throw new errors.NotFoundError('Navigation not found');
+      }
+      // TODO: validate type:
+      return temp as types.Navigation;
+    })();
     if( data.name !== navData.name ) {
       // are these the correct parameters??:
       const update: any = {
