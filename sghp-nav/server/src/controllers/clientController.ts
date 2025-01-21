@@ -20,12 +20,12 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
   async renderAll(ctx) {
     await this.validateQuery(ctx);
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
-    const results = await strapi
+    const {results, pagination} = await strapi
       .plugin('sghp-nav')
       .service('clientService')
       .renderAll( sanitizedQueryParams );
     const sanitizedResults = results;
-    return this.transformResponse( sanitizedResults );
+    return this.transformResponse( sanitizedResults, { pagination });
   },
 
 } ));

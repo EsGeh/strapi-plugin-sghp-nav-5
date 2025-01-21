@@ -53,7 +53,10 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
         items: renderedItems,
       }
     })
-    return renderedNavs;
+    return {
+      results: renderedNavs,
+      pagination: rawFindRet.pagination
+    };
   },
 
 }));
