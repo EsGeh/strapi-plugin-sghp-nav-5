@@ -513,22 +513,11 @@ const EditorMain = (
         }</Button>
       }
     />
-    : <>
-    <ItemList
+    : <ItemList
       config={ state.data.config }
       items={ navigation.items }
       { ...editHooks }
     />
-    <Button
-      // disabled={ }
-      fullWidth
-      startIcon={<Plus />}
-      label={ "label" }
-      onClick={ () => { editHooks.onAddItemClicked(); } }
-    >{
-      "Add Child"
-    }</Button>
-    </>
   }
   </Flex>
   </Layouts.Content>;

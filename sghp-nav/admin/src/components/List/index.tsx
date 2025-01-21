@@ -8,7 +8,11 @@ import {
 import {
   Box,
   Flex,
+  Button,
 } from '@strapi/design-system';
+import {
+  Plus,
+} from '@strapi/icons';
 import {
   useTheme,
 } from 'styled-components';
@@ -42,6 +46,15 @@ export default function ItemList(args : Args) {
           { ...itemEditHooks }
         />
       } )
-    }</Flex>
+    }
+      <Button
+        fullWidth
+        startIcon={<Plus />}
+        label={ "label" }
+        onClick={ () => { itemEditHooks.onAddItemClicked(); } }
+      >{
+        "Add Child"
+      }</Button>
+    </Flex>
   );
 };
