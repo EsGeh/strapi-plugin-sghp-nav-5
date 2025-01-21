@@ -23,6 +23,7 @@ import {
   Main,
   EmptyStateLayout,
   Button,
+  IconButton,
   Flex,
   SingleSelect,
   SingleSelectOption,
@@ -33,6 +34,7 @@ import {
 } from '@strapi/strapi/admin';
 import {
   Plus,
+  Trash,
   Check,
 } from '@strapi/icons';
 import { useIntl } from 'react-intl';
@@ -491,29 +493,14 @@ const EditorMain = (
   } & EditHooks
 ) => {
   const navigation = state.data.navigations.find(navigation => navigation.name === state.selection.name);
+  const theme = useTheme();
   return <Layouts.Content>
-    <Flex>
-      <SingleSelect
-        label="Navigations"
-        placeholder="Select Navigation..."
-        onChange={ editHooks.onChangeNavigation }
-        value={ state.selection.name }
-      >{
-        state.data.navigations.map( (navInfo, i) => (
-          <SingleSelectOption key={ i } value={ navInfo.name }>{ navInfo.name }</SingleSelectOption>
-        ) )
-      }</SingleSelect>
-      <SingleSelect
-        label="Locales"
-        placeholder="Language..."
-        onChange={ editHooks.onChangeLanguage }
-        value={ state.selection.locale }
-      >{
-        state.data.locales.map( (locale, i) => (
-          <SingleSelectOption key={ i } value={ locale.code }>{ locale.name }</SingleSelectOption>
-        ) )
-      }</SingleSelect>
-    </Flex>
+  <Flex
+    direction="column"
+    gap={ theme['spaces'][2] }
+    alignItems="stretch"
+  >
+    <EditorCommands state={state} { ...editHooks } />
     { (navigation === undefined)
     ? <EmptyStateLayout
       content="No navigation yet..."
@@ -542,8 +529,64 @@ const EditorMain = (
       "Add Child"
     }</Button>
     </>
-  }</Layouts.Content>;
+  }
+  </Flex>
+  </Layouts.Content>;
 };
+
+const EditorCommands = (
+  { state, ...editHooks }
+  : {
+    state: PageStateOK,
+  } & EditHooks
+) => {
+  const theme = useTheme();
+  return (
+    <Flex
+      gap={ theme['spaces'][2] }
+    >
+      <IconButton
+        label={ "Add Navigation" }
+        onClick={ editHooks.onAddNav }
+        variant="primary"
+        size="M"
+      >
+        <Plus />
+      </IconButton>
+      <SingleSelect
+        label="Navigations"
+        placeholder="Select Navigation..."
+        onChange={ editHooks.onChangeNavigation }
+        value={ state.selection.name }
+      >{
+        state.data.navigations.map( (navInfo, i) => (
+          <SingleSelectOption key={ i } value={ navInfo.name }>{ navInfo.name }</SingleSelectOption>
+        ) )
+      }</SingleSelect>
+      <IconButton
+        label={ "Delete Navigation" }
+        onClick={ editHooks.onDelNav }
+        disabled={ state.selection.name == "Main" }
+        variant="secondary"
+        size="M"
+      >
+        <Trash />
+      </IconButton>
+      <div style={{ marginLeft:"auto" }} >
+        <SingleSelect
+          label="Locales"
+          placeholder="Language..."
+          onChange={ editHooks.onChangeLanguage }
+          value={ state.selection.locale }
+        >{
+          state.data.locales.map( (locale, i) => (
+            <SingleSelectOption key={ i } value={ locale.code }>{ locale.name }</SingleSelectOption>
+          ) )
+        }</SingleSelect>
+      </div>
+    </Flex>
+  );
+}
 
 const EditorHeader = (
   { state, ...editHooks }
@@ -559,24 +602,6 @@ const EditorHeader = (
         startIcon={ <Check/> }
         onClick={ editHooks.onSave }
       >Save</Button>
-    }
-    secondaryAction={
-      <Flex
-        gap={ theme['spaces'][2] }
-        alignItems="flex-end"
-      >
-        <Button
-          startIcon={<Plus />}
-          label={ "label" }
-          onClick={ editHooks.onAddNav }
-        >{ "Add Navigation" }</Button>
-        <Button
-          label={ "label" }
-          variant="danger"
-          disabled={ state.selection.name == "Main" }
-          onClick={ editHooks.onDelNav }
-        >{ "Delete" }</Button>
-      </Flex>
     }
   />;
 };
