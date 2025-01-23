@@ -1,4 +1,4 @@
-# Strapi plugin sghp-nav 5
+# Strapi Plugin sghp-nav 5
 
 Plugin for [Strapi](https://strapi.io/) to create, edit and retrieve website navigation structure.
 

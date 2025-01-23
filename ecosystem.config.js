@@ -1,16 +1,16 @@
 module.exports = {
   apps : [
     {
-      name: "sghp-nav-test",
-      script: 'npm',
-			args: 'run develop',
-      cwd: 'sghp-nav-test-app',
-    },
-    {
-      name: "sghp-nav",
+      name: "sghp-nav-compile",
       script: 'npm',
 			args: 'run watch:link',
       cwd: 'sghp-nav',
-    }
+    },
+    {
+      name: "test-backend",
+      script: 'npm',
+			args: 'run develop',
+      cwd: 'test/strapi-backend',
+    },
   ],
 };

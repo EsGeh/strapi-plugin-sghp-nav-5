@@ -1,4 +1,4 @@
-# sghp-nav plugin - Test App
+# sghp-nav Plugin - Test Backend
 
 Strapi test instance for the sghp-nav plugin.
 
@@ -6,10 +6,11 @@ Strapi test instance for the sghp-nav plugin.
 
 Link with local plugin during development:
 
-    $ cd ../sghp-nav
-    $ npm run watch:link
-    $ cd ../sghp-nav-test-app
-    $ npx yalc link sghp-nav
+    $ WD=$(pwd)
+    $ cd <path>/sghp-nav      # <- cd to the plugin dir
+    $ npm run watch:link      # recompile
+    $ cd "$WD"
+    $ npx yalc link sghp-nav  # link to test app
 
 Now when running the test app, the plugin will be installed and linked from local sources:
 
