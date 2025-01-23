@@ -4,7 +4,7 @@ module.exports = {
       name: "sghp-nav-compile",
       script: 'npm',
 			args: 'run watch:link',
-      cwd: 'sghp-nav',
+      cwd: 'packages/sghp-nav',
     },
     {
       name: "test-backend",

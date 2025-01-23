@@ -1,1 +1,1 @@
-sghp-nav/README.md
+packages/sghp-nav/README.md
