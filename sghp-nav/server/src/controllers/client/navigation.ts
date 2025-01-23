@@ -4,16 +4,20 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
   index(ctx) {
     ctx.body = strapi
       .plugin('sghp-nav')
-      .service('clientService')
+      .service('clientNavigation')
       .getWelcomeMessage();
   },
   async find(ctx) {
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
-    const { results, pagination } = await strapi
+    const {results, pagination} = await strapi
       .plugin('sghp-nav')
-      .service('clientService')
+      .service('clientNavigation')
       .find(sanitizedQueryParams);
-    const sanitizedResults = await this.sanitizeOutput(results, ctx);
+    const sanitizedResults = results;
+    /* the following doesn't work -
+     * will purge related entities,
+     * such as items if "populate=items": */
+    // const sanitizedResults = await this.sanitizeOutput(results, ctx);
     return this.transformResponse(sanitizedResults, { pagination });
   },
 
@@ -22,9 +26,13 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
     const {results, pagination} = await strapi
       .plugin('sghp-nav')
-      .service('clientService')
+      .service('clientNavigation')
       .renderAll( sanitizedQueryParams );
     const sanitizedResults = results;
+    /* the following doesn't work -
+     * will purge related entities,
+     * such as items if "populate=items": */
+    // const sanitizedResults = await this.sanitizeOutput(results, ctx);
     return this.transformResponse( sanitizedResults, { pagination });
   },
 

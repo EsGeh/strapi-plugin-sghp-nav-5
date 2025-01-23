@@ -59,6 +59,13 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
     };
   },
 
+  async find(
+    ...params
+  ) {
+    const {results, pagination} = await super.find(...params);
+    return {results, pagination};
+  }
+
 }));
 
 namespace Private {

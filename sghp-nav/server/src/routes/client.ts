@@ -4,7 +4,7 @@ export default {
     {
       method: "GET",
       path: "/",
-      handler: "clientController.index",
+      handler: "clientNavigation.index",
       config: {
         auth: false,
         policies: [],
@@ -13,7 +13,7 @@ export default {
     {
       method: "GET",
       path: "/navigations/render",
-      handler: "clientController.renderAll",
+      handler: "clientNavigation.renderAll",
       config: {
         auth: false,
         policies: [],
@@ -22,7 +22,16 @@ export default {
     {
       method: "GET",
       path: "/navigations",
-      handler: "clientController.find",
+      handler: "clientNavigation.find",
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: "GET",
+      path: "/navigations/items",
+      handler: "clientItem.find",
       config: {
         auth: false,
         policies: [],
