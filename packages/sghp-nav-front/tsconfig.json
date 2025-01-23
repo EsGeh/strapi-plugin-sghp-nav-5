@@ -1,0 +1,10 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+		"rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "declaration": true,
+		"composite": true
+  }
+}
