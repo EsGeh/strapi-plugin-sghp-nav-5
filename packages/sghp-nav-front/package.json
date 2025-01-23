@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist/ tsconfig.tsbuildinfo",
     "prepare": "npm run build",
-    "test": "tsc --noEmit tests/examples.ts"
+    "test": "tsc --noEmit tests/test_utils.ts"
   },
   "keywords": [
     "strapi",

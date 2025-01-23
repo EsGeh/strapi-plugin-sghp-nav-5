@@ -8,6 +8,7 @@ type IsEqual<Type1,Type2> =
 	? true
 	: never;
 
+
 function testNoQuery() {
 	const query = {} as const;
 	type Expected = {

@@ -2,14 +2,12 @@ import * as typeDescr from "./typeDescriptions";
 import * as utils from "./utils";
 
 
-export type RestReturnNavigations<Args> =
-	utils.RetFromArgs<
-		typeDescr.Navigation,
-		Args
-	>;
+// url: /sghp-nav/navigations
+export type RestReturnNavigations<Args> = {
+	data: utils.RetFromArgs<typeDescr.Navigation,Args>[]
+};
 
-export type RestReturnItems<Args> =
-	utils.RetFromArgs<
-		typeDescr.Item,
-		Args
-	>;
+// url: /sghp-nav/items
+export type RestReturnItems<Args> = {
+	data: utils.RetFromArgs<typeDescr.Item,Args>[]
+};
