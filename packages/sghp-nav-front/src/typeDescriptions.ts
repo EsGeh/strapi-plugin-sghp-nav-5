@@ -12,12 +12,26 @@ export type Item = {
 	attributes: {
 		title: string,
 		path: string,
-		locale: string,
+		order: number,
 		parent: Item|null,
 	}
 	relations: {
 		related: any,
-		subItems: Item[],
 	}
 }
 
+
+/*************
+ * rendered:
+**************/
+
+export type ItemRendered = {
+	attributes: {
+		title: string,
+		path: string,
+	}
+	relations: {
+		related: any,
+		subItems: ItemRendered[],
+	}
+};
