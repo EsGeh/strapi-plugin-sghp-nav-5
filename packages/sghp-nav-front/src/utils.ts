@@ -32,7 +32,7 @@ type FieldsFromArgs<
   : keyof Attributes
 ;
 
-type EmptyQuery = Record<string,never>;
+export type EmptyQuery = Record<string,never>;
 
 type RelationsFromArgs<
 	Schema,
@@ -43,11 +43,7 @@ type RelationsFromArgs<
 			| { populate: (infer Field) & string }
 		? {
 			[Key in (Field & keyof SchemaRelations<Schema>)]:
-				Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)[]
-					? RetFromArgs<SubSchema,EmptyQuery>[]
-				: Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)
-					? RetFromArgs<SubSchema,EmptyQuery>
-				: never
+				Helper<Schema,Key,EmptyQuery>
 		}
 	: RestArgs extends { populate: (infer Dict) }
 		? {
@@ -55,14 +51,18 @@ type RelationsFromArgs<
 				// infer SubArgs:
 				Dict[Key] extends infer SubArgs
 				? (
-					Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)[]
-						? RetFromArgs<SubSchema,SubArgs>[]
-					: Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)
-						? RetFromArgs<SubSchema,SubArgs>
-					: never
+					Helper<Schema,Key,SubArgs>
 				) : never
 		}
 	: { [Key in never]: SchemaRelations<Schema>[Key] }
+;
+
+type Helper<Schema,Key,SubArgs> = 
+	Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)[]
+		? RetFromArgs<SubSchema,SubArgs>[]
+	: Lookup<SchemaRelations<Schema>,Key> extends (infer SubSchema)
+		? RetFromArgs<SubSchema,SubArgs>
+	: never
 ;
 
 type Lookup<Dict,Key> =
@@ -70,4 +70,3 @@ type Lookup<Dict,Key> =
 	? Dict[Key]
 	: never
 ;
-

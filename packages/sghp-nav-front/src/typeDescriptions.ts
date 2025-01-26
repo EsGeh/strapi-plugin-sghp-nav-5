@@ -31,7 +31,14 @@ export type ItemRendered = {
 		path: string,
 	}
 	relations: {
-		related: any,
+		related: Related,
 		subItems: ItemRendered[],
 	}
 };
+
+type Related = {
+	attributes: {
+		id: number,
+		documentId: string,
+	}
+}

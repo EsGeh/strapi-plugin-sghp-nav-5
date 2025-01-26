@@ -8,7 +8,8 @@ export default factories.createCoreController('plugin::sghp-nav.item', ({ strapi
       .plugin('sghp-nav')
       .service('clientItem')
       .find(sanitizedQueryParams);
-    const sanitizedResults = await this.sanitizeOutput(results, ctx);
+    const sanitizedResults = results;
+    // const sanitizedResults = await this.sanitizeOutput(results, ctx);
     return this.transformResponse(sanitizedResults, { pagination });
   },
 
