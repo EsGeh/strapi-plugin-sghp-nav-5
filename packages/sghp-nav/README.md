@@ -1,8 +1,10 @@
 # Strapi Plugin sghp-nav 5
 
-![logo](./doc/logo.png)
+<div style="max-width: 10rem; margin: 0 auto">
+  <img style="width: 150px; height: auto;" src="./imgs/logo.png" alt="Logo" />
+</div>
 
-![screenshot of graphical user interface](./doc/screenshot.png)
+![screenshot of graphical user interface](./imgs/screenshot.png)
 
 Plugin for [Strapi](https://strapi.io/) to create, edit and retrieve website navigation structure.
 
