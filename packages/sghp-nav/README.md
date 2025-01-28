@@ -1,5 +1,9 @@
 # Strapi Plugin sghp-nav 5
 
+![logo](./doc/logo.png)
+
+![screenshot of graphical user interface](./doc/screenshot.png)
+
 Plugin for [Strapi](https://strapi.io/) to create, edit and retrieve website navigation structure.
 
 # Features:
@@ -40,6 +44,10 @@ Configuration Options:
 - `relatedType`: Menu entries may be associated with entities of a custom content type, e.g. a subpage. Refers to a content type via "strapi uid" in the same format as in [strapis entity service api](https://docs.strapi.io/dev-docs/api/entity-service). `$ npm run strapi content-types:list` lists all content types.
 - `relatedDisplayField`: a field of the related type used to display related content in the graphical user interface
 - `hierarchicalPaths`: Menu entries consist of a title and a path. The path must be unique. If `hierarchicalPaths` is true, the path of subentries is the concatenation with the path of their parents, e.g. if `/productX` is a subentry of `/products`, the full path is `/products/productX`
+
+# Admin Frontend
+
+Navigation structure may be edited in the browser from <http://localhost:1337/admin/plugins/sghp-nav>.
 
 # REST API
 
@@ -102,12 +110,68 @@ Get Params:
 - `locale`: Query the navigation for a specific locale. If unspecified, returns default locale
 - `populateRelated`: specifies what information to return for related entities. The format is exactly as in a [REST request](https://docs.strapi.io/dev-docs/api/rest/parameters) for the corresponding content type. Most notable operators are: `populate` and, `fields`.
 
+# Query from Frontend
+
+There is a npm package that provides the correct typings for the REST response.
+This will add autocompletion and typesafety to your frontend. Hooray!
+
+To install it, `cd` to your prontend package and issue:
+
+- Install via npm:
+
+        $ npm install @sgsoftware/strapi-plugin-sghp-nav-front
+
+- Install via yarn:
+
+        $ yarn add @sgsoftware/strapi-plugin-sghp-nav-front
+
+The following code snipped shows how to fetch navigation data from the strapi backend via REST.
+
+  import * as qs from 'qs';
+  import * as front from '@sgsoftware/strapi-plugin-sghp-nav-front';
+  import fetch from "node-fetch";
+
+  const query = {
+  	populateRelated: true
+    // alternatively:
+    //   populateRelated: {
+    //      fields: ...
+    //      populate: ...
+    //   }
+  } as const;
+  
+  type Args = typeof query;
+  type PageType = {
+    title: string,
+    content: string,
+  };
+  type Navigation = front.RestReturnRender<Args, PageType>["data"][number];
+  type Item = Navigation["items"];
+  
+  const argsString = qs.stringify( query );
+  
+  const url = `http://127.0.0.1:1337/api/sghp-nav/navigations/render?${argsString}`;
+  fetch( url )
+  .then(res => res.json())
+  .then((json: front.RetReturnRender<Args>) => {
+
+    /**************************************
+    * DO STH WITH NAVIGATION DATA...
+    *    json.data.<...>
+    ***************************************/
+
+  })
+  .catch( error => {
+    throw Error("Error fetching navigation data!");
+  });
+
+
 # Contribution
 
 Comments, bug reports and pull requests welcome.
 Effort has been taken towards well structured code that should be easy to extend and improve.
 
-This plugin was born from practical considerations and aims to close some gaps of other existing solutions which seemed to fail the folllowing requirements (as of 2023-09-11):
+# References
 
-- Import / Export via strapis native command line tools ([without breaking relations](https://github.com/VirtusLab-Open-Source/strapi-plugin-navigation/issues/317))
-- Internationalization (missing in `strapi-plugin-menus`)
+- [strapi-plugin-navigation](https://github.com/VirtusLab-Open-Source/strapi-plugin-navigation)
+- [types-4-strapi-2](https://github.com/Oak-Digital/types-4-strapi-2) 

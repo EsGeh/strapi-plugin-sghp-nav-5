@@ -1,5 +1,9 @@
 {
-  "version": "0.0.0",
+  "name": "@sgsoftware/strapi-plugin-sghp-nav",
+  "description": "Plugin for strapi to create, edit and retrieve website navigation structure",
+  "license": "MIT",
+  "author": "EsGeh <samuel@esgeh.net>",
+  "version": "5.0.0",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -61,9 +65,5 @@
     "name": "sghp-nav",
     "displayName": "sghp-nav",
     "description": "Plugin for strapi to create, edit and retrieve website navigation structure"
-  },
-  "name": "sghp-nav",
-  "description": "Plugin for strapi to create, edit and retrieve website navigation structure",
-  "license": "MIT",
-  "author": "EsGeh <samuel@esgeh.net>"
+  }
 }

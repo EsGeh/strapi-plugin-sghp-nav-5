@@ -193,6 +193,8 @@ describe("render with related", () => {
 
 		type Args = typeof query;
 		type PageType = { title: string };
+		type Navigation = front.RestReturnRender<Args, PageType>["data"][number];
+		type Item = Navigation["items"][number];
 		const expected: front.RestReturnRender<Args, PageType> = {
 			data: [
 				{

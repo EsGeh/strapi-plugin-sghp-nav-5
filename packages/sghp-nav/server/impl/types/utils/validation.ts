@@ -76,7 +76,7 @@ export function validateEdit(
   let itemCopy = ops.findItemById( navCopy, item.id );
   if( !itemCopy ) return ["item not found"]
   for( const [k,v] of Object.entries( item ) ) {
-    itemCopy[k] = v;
+    (itemCopy as any)[k] = v;
   }
   return validate( navCopy, hierarchicalPaths );
 }
