@@ -3,39 +3,39 @@ export default {
   routes: [
     {
       method: "GET",
-      path: "/",
-      handler: "clientNavigation.index",
-      config: {
-        auth: false,
-        policies: [],
-      },
+      path: "/navigations/render",
+      handler: "navigation.renderAll",
+      // config: {
+      //   auth: false,
+      // },
     },
+    /**************************
+     * For Debugging/Testing only:
+     * (undocumented)
+     ******************************/
     {
       method: "GET",
-      path: "/navigations/render",
-      handler: "clientNavigation.renderAll",
-      config: {
-        auth: false,
-        policies: [],
-      },
+      path: "/",
+      handler: "navigation.index",
+      //config: {
+      //  auth: false,
+      //},
     },
     {
       method: "GET",
       path: "/navigations",
-      handler: "clientNavigation.find",
-      config: {
-        auth: false,
-        policies: [],
-      },
+      handler: "navigation.find",
+      // config: {
+      //   auth: false,
+      // },
     },
     {
       method: "GET",
       path: "/navigations/items",
-      handler: "clientItem.find",
-      config: {
-        auth: false,
-        policies: [],
-      },
+      handler: "item.find",
+      // config: {
+      //   auth: false,
+      // },
     },
   ],
 };

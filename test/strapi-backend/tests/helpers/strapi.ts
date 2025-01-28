@@ -5,6 +5,14 @@ import * as fs from 'fs';
 
 let instance: Core.Strapi | null;
 
+/* For details about creating
+ * a strapi instance, see:
+ *
+ * - https://github.com/strapi/strapi/blob/develop/tests/api/core/strapi/api/ 
+ * - https://github.com/strapi/strapi/blob/develop/packages/utils/api-tests/strapi.js 
+ *
+ */
+
 export async function setupStrapi() {
   if (!instance) {
 		const options = {
@@ -12,6 +20,14 @@ export async function setupStrapi() {
 			distDir: 'dist',
 		};
     instance = createStrapi(options);
+		// bypass auth:
+    instance.get('auth').register('content-api', {
+      name: 'test-auth',
+      authenticate() {
+        return { authenticated: true };
+      },
+      verify() {},
+    });
 		const si = await instance.load();
 		await si.start();
 		// console.log("STRAPI RUNNING");

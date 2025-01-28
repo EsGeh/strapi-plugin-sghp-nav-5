@@ -1,12 +1,12 @@
 import adminConfig from './admin/config';
 import adminNavigation from './admin/navigation';
 import adminItem from './admin/item';
-import clientNavigation from './client/navigation';
-import clientItem from './client/item';
+import navigation from './client/navigation';
+import item from './client/item';
 
 export default {
-  clientNavigation,
-  clientItem,
+  navigation,
+  item,
   adminConfig,
   adminNavigation,
   adminItem,
