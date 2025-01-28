@@ -53,53 +53,53 @@ Navigation structure may be edited in the browser from <http://localhost:1337/ad
 
 Example Query:
 
-  $ curl -X GET 'http://localhost:1337/api/sghp-nav/navigations/render'
+    $ curl -X GET 'http://localhost:1337/api/sghp-nav/navigations/render'
 
 Example Response:
 
-  {
-    "data": [
-      {
-        "id": 6,
-        "documentId": "csfeocqquqz2bekl1xycrfkh",
-        "name": "Main",
-        "createdAt": "2025-01-09T22:06:55.493Z",
-        "updatedAt": "2025-01-09T22:06:55.493Z",
-        "publishedAt": "2025-01-09T22:06:55.489Z",
-        "locale": "en",
-        "items": [
-          {
-            "id": 13,
-            "title": "Home",
-            "path": "/",
-            "subItems": []
-          },
-          {
-            "id": 14,
-            "title": "Products",
-            "path": "/products",
-            "subItems": [
-              {
-                "id": 15,
-                "title": "Product X",
-                "path": "/products/product-x",
-                "subItems": []
-              }
-            ]
-          },
-          {
-            "id": 16,
-            "title": "Contact",
-            "path": "/contact",
-            "subItems": []
-          }
-        ]
+    {
+      "data": [
+        {
+          "id": 6,
+          "documentId": "csfeocqquqz2bekl1xycrfkh",
+          "name": "Main",
+          "createdAt": "2025-01-09T22:06:55.493Z",
+          "updatedAt": "2025-01-09T22:06:55.493Z",
+          "publishedAt": "2025-01-09T22:06:55.489Z",
+          "locale": "en",
+          "items": [
+            {
+              "id": 13,
+              "title": "Home",
+              "path": "/",
+              "subItems": []
+            },
+            {
+              "id": 14,
+              "title": "Products",
+              "path": "/products",
+              "subItems": [
+                {
+                  "id": 15,
+                  "title": "Product X",
+                  "path": "/products/product-x",
+                  "subItems": []
+                }
+              ]
+            },
+            {
+              "id": 16,
+              "title": "Contact",
+              "path": "/contact",
+              "subItems": []
+            }
+          ]
+        }
+      ],
+      "meta": {
+    
       }
-    ],
-    "meta": {
-
     }
-  }
 
 Request Format:
 
@@ -127,44 +127,43 @@ To install it, `cd` to your prontend package and issue:
 
 The following code snipped shows how to fetch navigation data from the strapi backend via REST.
 
-  import * as qs from 'qs';
-  import * as front from '@sgsoftware/strapi-plugin-sghp-nav-front';
-  import fetch from "node-fetch";
-
-  const query = {
-  	populateRelated: true
-    // alternatively:
-    //   populateRelated: {
-    //      fields: ...
-    //      populate: ...
-    //   }
-  } as const;
-  
-  type Args = typeof query;
-  type PageType = {
-    title: string,
-    content: string,
-  };
-  type Navigation = front.RestReturnRender<Args, PageType>["data"][number];
-  type Item = Navigation["items"];
-  
-  const argsString = qs.stringify( query );
-  
-  const url = `http://127.0.0.1:1337/api/sghp-nav/navigations/render?${argsString}`;
-  fetch( url )
-  .then(res => res.json())
-  .then((json: front.RetReturnRender<Args>) => {
-
-    /**************************************
-    * DO STH WITH NAVIGATION DATA...
-    *    json.data.<...>
-    ***************************************/
-
-  })
-  .catch( error => {
-    throw Error("Error fetching navigation data!");
-  });
-
+    import * as qs from 'qs';
+    import * as front from '@sgsoftware/strapi-plugin-sghp-nav-front';
+    import fetch from "node-fetch";
+    
+    const query = {
+    	populateRelated: true
+      // alternatively:
+      //   populateRelated: {
+      //      fields: ...
+      //      populate: ...
+      //   }
+    } as const;
+    
+    type Args = typeof query;
+    type PageType = {
+      title: string,
+      content: string,
+    };
+    type Navigation = front.RestReturnRender<Args, PageType>["data"][number];
+    type Item = Navigation["items"];
+    
+    const argsString = qs.stringify( query );
+    
+    const url = `http://127.0.0.1:1337/api/sghp-nav/navigations/render?${argsString}`;
+    fetch( url )
+    .then(res => res.json())
+    .then((json: front.RetReturnRender<Args>) => {
+    
+      /**************************************
+      * DO STH WITH NAVIGATION DATA...
+      *    json.data.<...>
+      ***************************************/
+    
+    })
+    .catch( error => {
+      throw Error("Error fetching navigation data!");
+    });
 
 # Contribution
 
