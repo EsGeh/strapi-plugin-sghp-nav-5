@@ -66,6 +66,28 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
     return {results, pagination};
   },
 
+  /*
+  // create default navigation:
+  async addNavigation(
+    name: string = "Main"
+  )
+  {
+    const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
+    let mainEntry = await navDocuments.findMany({
+      filters: {
+        name: name
+      }
+    });
+    if( !mainEntry || mainEntry.length == 0 ) {
+      console.info( "sghp-nav: creating default navigation..." );
+      const navigationDocument = await navDocuments.create({
+        data: {
+          name: name
+        },
+      });
+    }
+  },
+
   async addExampleData()
   {
     const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
@@ -120,7 +142,8 @@ export default factories.createCoreService('plugin::sghp-nav.navigation', ({ str
         }
       });
     }
-  },
+  }
+  */
 
 }));
 

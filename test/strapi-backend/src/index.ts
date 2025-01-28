@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { addExampleData } from '../tests/helpers/strapi';
 
 export default {
   /**
@@ -17,11 +18,15 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
-		/*
-		return strapi
-			.plugin("sghp-nav")
-			.service("clientNavigation")
-			.addExampleData();
-		*/
+		if( process.env.NODE_ENV == "development" ) {
+			const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
+			try {
+				console.info( "creating test data..." );
+				await addExampleData();
+			}
+			catch(e) {
+				console.info( "...nothing to do (Main nav already exists)" );
+			}
+		}
 	},
 };

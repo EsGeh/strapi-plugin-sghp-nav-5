@@ -19,6 +19,8 @@ describe("basic tests", () => {
 	});
 
 	test('test api/sghp-nav/navigations', async () => {
+		await utils.addExampleData();
+
 		const query = {} as const;
 
 		type Args = typeof query;

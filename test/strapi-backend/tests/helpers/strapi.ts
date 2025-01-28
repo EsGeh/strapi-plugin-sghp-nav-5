@@ -54,10 +54,65 @@ export async function stopStrapi() {
  * for the nav plugin:
  */
 export async function addExampleData() {
-	return strapi
-		.plugin("sghp-nav")
-		.service("navigation")
-		.addExampleData();
+	const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
+	const itemDocuments = strapi.documents('plugin::sghp-nav.item');
+	const pageDocuments = strapi.documents('api::page.page');
+	{
+		const main = await navDocuments.findFirst({ filters: { name: "Main" } });
+		if( main ) {
+			throw Error("Main navigation already existing!");
+		}
+	}
+	const mainNavigation = await navDocuments.create({
+		data: {
+			name: "Main"
+		}
+	});
+	const items = await itemDocuments.findMany({
+		filters: {
+			master: {
+				id: mainNavigation.id
+			}
+		}
+	});
+	if( items && items.length != 0 ) {
+		console.error( JSON.stringify( items ) );
+		throw Error("items already existing");
+		// return;
+	}
+	const homeItem = await itemDocuments.create({
+		data: {
+			title: "Home",
+			path: "",
+			order: 0,
+			master: mainNavigation,
+		}
+	});
+	const productsItem = await itemDocuments.create({
+		data: {
+			title: "Products",
+			path: "products",
+			order: 1,
+			master: mainNavigation,
+		}
+	});
+	await itemDocuments.create({
+		data: {
+			title: "Product X",
+			path: "product-x",
+			order: 0,
+			parent: productsItem,
+			master: mainNavigation,
+		}
+	});
+	await itemDocuments.create({
+		data: {
+			title: "Contact",
+			path: "contact",
+			order: 2,
+			master: mainNavigation,
+		}
+	});
 }
 
 /* 
@@ -68,66 +123,69 @@ export async function exampleDataWithRelated() {
 	const pageDocuments = strapi.documents('api::page.page');
 	const navDocuments = strapi.documents('plugin::sghp-nav.navigation');
 	const itemDocuments = strapi.documents('plugin::sghp-nav.item');
-	let mainNavigation = await navDocuments.findFirst({
-		filters: {
+	{
+		const main = await navDocuments.findFirst({ filters: { name: "Main" } });
+		if( main ) {
+			throw Error("Main navigation already existing!");
+		}
+	}
+	const mainNavigation = await navDocuments.create({
+		data: {
 			name: "Main"
 		}
 	});
 	// create test items:
-	if( mainNavigation  ) {
-		const items = await itemDocuments.findMany({
-			filters: {
-				master: {
-					id: mainNavigation.id
-				}
+	const items = await itemDocuments.findMany({
+		filters: {
+			master: {
+				id: mainNavigation.id
 			}
-		});
-		if( items && items.length != 0 ) {
-			console.error( JSON.stringify( items ) );
-			throw Error("items already existing");
-			// return;
 		}
-		console.info( "creating test data..." );
-		const homepage = await pageDocuments.create({
-			data: {
-				title: "Homepage",
-				content: "Lorem Ipsum",
-			},
-			status: "published"
-		});
-		const homeItem = await itemDocuments.create({
-			data: {
-				title: "Home",
-				path: "",
-				order: 0,
-				master: mainNavigation,
-				related: homepage,
-			}
-		});
-		const productsItem = await itemDocuments.create({
-			data: {
-				title: "Products",
-				path: "products",
-				order: 1,
-				master: mainNavigation,
-			}
-		});
-		await itemDocuments.create({
-			data: {
-				title: "Product X",
-				path: "product-x",
-				order: 0,
-				parent: productsItem,
-				master: mainNavigation,
-			}
-		});
-		await itemDocuments.create({
-			data: {
-				title: "Contact",
-				path: "contact",
-				order: 2,
-				master: mainNavigation,
-			}
-		});
+	});
+	if( items && items.length != 0 ) {
+		console.error( JSON.stringify( items ) );
+		throw Error("items already existing");
+		// return;
 	}
+	const homepage = await pageDocuments.create({
+		data: {
+			title: "Homepage",
+			content: "Lorem Ipsum",
+		},
+		status: "published"
+	});
+	const homeItem = await itemDocuments.create({
+		data: {
+			title: "Home",
+			path: "",
+			order: 0,
+			master: mainNavigation,
+			related: homepage,
+		}
+	});
+	const productsItem = await itemDocuments.create({
+		data: {
+			title: "Products",
+			path: "products",
+			order: 1,
+			master: mainNavigation,
+		}
+	});
+	await itemDocuments.create({
+		data: {
+			title: "Product X",
+			path: "product-x",
+			order: 0,
+			parent: productsItem,
+			master: mainNavigation,
+		}
+	});
+	await itemDocuments.create({
+		data: {
+			title: "Contact",
+			path: "contact",
+			order: 2,
+			master: mainNavigation,
+		}
+	});
 }
