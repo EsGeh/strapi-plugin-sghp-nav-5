@@ -1,4 +1,3 @@
-
 export type RetFromArgs<
 	Schema,
 	Args
@@ -10,6 +9,8 @@ export type RetFromArgs<
 	& 
 	RelationsFromArgs<Schema,Args>
 ;
+
+export type EmptyQuery = Record<string,never>;
 
 type SchemaAttributes<Schema> =
   Schema extends { attributes: infer Attributes }
@@ -31,8 +32,6 @@ type FieldsFromArgs<
   ? Extract<Fields, keyof Attributes>
   : keyof Attributes
 ;
-
-export type EmptyQuery = Record<string,never>;
 
 type RelationsFromArgs<
 	Schema,

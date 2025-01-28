@@ -1,21 +1,21 @@
 import * as typeDescr from "./typeDescriptions";
-import * as utils from "./utils";
+import * as strapiTypes from "./strapiTypes";
 
 
 // url: /sghp-nav/navigations
 export type RestReturnNavigations<Args> = {
-	data: utils.RetFromArgs<typeDescr.Navigation,Args>[]
+	data: strapiTypes.RetFromArgs<typeDescr.Navigation,Args>[]
 };
 
 // url: /sghp-nav/items
 export type RestReturnItems<Args> = {
-	data: utils.RetFromArgs<typeDescr.Item,Args>[]
+	data: strapiTypes.RetFromArgs<typeDescr.Item,Args>[]
 };
 
 // url: /sghp-nav/navigations/render
 export type RestReturnRender<Args, Related = never> = {
 	data: NavToRenderedNav<
-		utils.RetFromArgs<typeDescr.Navigation,RenderArgs>,
+		strapiTypes.RetFromArgs<typeDescr.Navigation,RenderArgs>,
 		RelatedArgsFromArgs<Args, Related>
 	>[]
 };
@@ -50,7 +50,7 @@ type RenderItemArgs = RenderArgs["populate"]["items"];
 
 type ItemWithChildren<Related> = PopulateSubItemsRec<
 	AddRelated<
-		utils.RetFromArgs<
+		strapiTypes.RetFromArgs<
 			typeDescr.ItemRendered,
 			RenderItemArgs
 		>,
