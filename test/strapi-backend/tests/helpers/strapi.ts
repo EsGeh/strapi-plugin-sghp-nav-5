@@ -56,7 +56,7 @@ export async function stopStrapi() {
 export async function addExampleData() {
 	return strapi
 		.plugin("sghp-nav")
-		.service("clientNavigation")
+		.service("navigation")
 		.addExampleData();
 }
 

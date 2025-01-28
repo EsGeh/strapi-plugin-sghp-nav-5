@@ -4,14 +4,14 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
   index(ctx) {
     ctx.body = strapi
       .plugin('sghp-nav')
-      .service('clientNavigation')
+      .service('navigation')
       .getWelcomeMessage();
   },
   async find(ctx) {
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
     const {results, pagination} = await strapi
       .plugin('sghp-nav')
-      .service('clientNavigation')
+      .service('navigation')
       .find(sanitizedQueryParams);
     const sanitizedResults = results;
     /* the following doesn't work -
@@ -26,7 +26,7 @@ export default factories.createCoreController('plugin::sghp-nav.navigation', ({ 
     const sanitizedQueryParams = await this.sanitizeQuery(ctx);
     const {results, pagination} = await strapi
       .plugin('sghp-nav')
-      .service('clientNavigation')
+      .service('navigation')
       .renderAll( sanitizedQueryParams );
     const sanitizedResults = results;
     /* the following doesn't work -
