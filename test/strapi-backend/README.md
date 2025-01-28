@@ -27,6 +27,11 @@ Stop the watcher process after you are done:
 
     $ pm2 stop sghp-nav-compile
 
+## Create Admin
+
+    $ npm run strapi admin:create -- --firstname=... --email=... -p <password>
+
+
 ## Import Example Data
 
     $ npm run strapi console
