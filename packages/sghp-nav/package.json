@@ -1,10 +1,29 @@
 {
-  "name": "@sgsoftware/strapi-plugin-sghp-nav",
+  "name": "@sgsoftware/strapi-plugin-sghp-nav-5",
+  "version": "5.0.0",
   "description": "Plugin for strapi to create, edit and retrieve website navigation structure",
   "license": "MIT",
-  "author": "EsGeh <samuel@esgeh.net>",
-  "version": "5.0.0",
-  "keywords": [],
+  "author": {
+    "name": "Samuel Gfrörer",
+    "email": "samuel@esgeh.net",
+    "url": "https://software.esgeh.net"
+  },
+  "maintainers": [
+    {
+      "name": "Samuel Gfrörer",
+      "email": "samuel@esgeh.net",
+      "url": "https://software.esgeh.net"
+    }
+  ],
+  "homepage": "https://github.com/EsGeh/strapi-plugin-sghp-nav-5",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "navigation",
+    "menu",
+    "typescript",
+    "types"
+  ],
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",

@@ -1,7 +1,7 @@
 import * as utils from './helpers/strapi';
 
 import * as qs from 'qs';
-import * as front from '@sgsoftware/strapi-plugin-sghp-nav-front';
+import * as front from '@sgsoftware/strapi-plugin-sghp-nav-5-front';
 import fetch from "node-fetch";
 
 

@@ -23,7 +23,29 @@ Plugin for [Strapi](https://strapi.io/) to create, edit and retrieve website nav
 
 - Strapi 5
 
-This is the strapi *5 version* of the older project [strapi-plugin-sghp-nav](https://github.com/EsGeh/strapi-plugin-sghp-nav), which was compatible with strapi version 4.
+This is the strapi *5 version* of the legacy (Strapi v4) project [strapi-plugin-sghp-nav](https://github.com/EsGeh/strapi-plugin-sghp-nav).
+
+# Installation
+
+1. Install package from npm:
+
+    - Install via npm:
+
+            $ npm install @sgsoftware/strapi-plugin-sghp-nav-5
+
+    - Install via yarn:
+
+            $ yarn add @sgsoftware/strapi-plugin-sghp-nav-5
+
+2. [Create the necessary configuration](#configuration) as described below.
+
+3. Recompile admin
+
+    $ npm run build
+
+The plugin should now be ready.
+Use the admin interface to create or edit navigation structure (url: <http://localhost:1337/admin/plugins/sghp-nav>).
+[Query](#query) navigation data via REST.
 
 # Configuration
 
@@ -121,16 +143,16 @@ To install it, `cd` to your prontend package and issue:
 
 - Install via npm:
 
-        $ npm install @sgsoftware/strapi-plugin-sghp-nav-front
+        $ npm install @sgsoftware/strapi-plugin-sghp-nav-5-front
 
 - Install via yarn:
 
-        $ yarn add @sgsoftware/strapi-plugin-sghp-nav-front
+        $ yarn add @sgsoftware/strapi-plugin-sghp-nav-5-front
 
 The following code snipped shows how to fetch navigation data from the strapi backend via REST.
 
     import * as qs from 'qs';
-    import * as front from '@sgsoftware/strapi-plugin-sghp-nav-front';
+    import * as front from '@sgsoftware/strapi-plugin-sghp-nav-5-front';
     import fetch from "node-fetch";
     
     const query = {

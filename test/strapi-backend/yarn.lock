@@ -2248,10 +2248,10 @@
     argparse "~1.0.9"
     string-argv "~0.3.1"
 
-"@sgsoftware/strapi-plugin-sghp-nav-front@file:.yalc/@sgsoftware/strapi-plugin-sghp-nav-front":
+"@sgsoftware/strapi-plugin-sghp-nav-5-front@file:.yalc/@sgsoftware/strapi-plugin-sghp-nav-5-front":
   version "5.0.0"
 
-"@sgsoftware/strapi-plugin-sghp-nav@file:.yalc/@sgsoftware/strapi-plugin-sghp-nav":
+"@sgsoftware/strapi-plugin-sghp-nav-5@file:.yalc/@sgsoftware/strapi-plugin-sghp-nav-5":
   version "5.0.0"
   dependencies:
     "@strapi/design-system" "^2.0.0-rc.14"
