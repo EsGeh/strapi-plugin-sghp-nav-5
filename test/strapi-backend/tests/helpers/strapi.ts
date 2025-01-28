@@ -91,6 +91,7 @@ export async function exampleDataWithRelated() {
 		const homepage = await pageDocuments.create({
 			data: {
 				title: "Homepage",
+				content: "Lorem Ipsum",
 			},
 			status: "published"
 		});
