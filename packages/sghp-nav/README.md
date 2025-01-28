@@ -1,8 +1,8 @@
-# Strapi Plugin sghp-nav 5
-
 <div style="max-width: 10rem; margin: 0 auto">
   <img style="width: 150px; height: auto;" src="./imgs/logo.png" alt="Logo" />
 </div>
+
+# Strapi Plugin sghp-nav 5
 
 ![screenshot of graphical user interface](./imgs/screenshot.png)
 
