@@ -31,10 +31,10 @@
       "url": "https://software.esgeh.net"
     }
   ],
-  "homepage": "https://github.com/EsGeh/strapi-plugin-sghp-nav",
+  "homepage": "https://github.com/EsGeh/strapi-plugin-sghp-nav-5",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EsGeh/strapi-plugin-sghp-nav.git"
+    "url": "git+https://github.com/EsGeh/strapi-plugin-sghp-nav-5.git"
   },
   "license": "MIT",
   "files": [
